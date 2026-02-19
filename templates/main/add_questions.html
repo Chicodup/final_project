@@ -12,12 +12,18 @@
     <h5>Варіанти відповідей</h5>
     {{ answer_formset.management_form }}
     {% for form in answer_formset %}
-        <div class="mb-2 p-2 border rounded">
+        <div class="mb-4 p-4 border rounded">
             {{ form.as_p }}
         </div>
     {% endfor %}
 
-    <button type="submit" class="btn btn-success">Додати питання</button>
+    <button type="submit" class="btn btn-success">
+        Додати питання
+    </button>
+
+    <a href="{% url 'quiz_list' %}" class="btn btn-secondary ms-2">
+        Назад
+    </a>
 </form>
 
 {% endblock %}

@@ -7,7 +7,7 @@ from .forms import QuizForm, QuestionForm, AnswerForm
 
 # Inline formset для додавання відповідей до питання
 AnswerFormSet = inlineformset_factory(
-    Question, Answer, form=AnswerForm, extra=2, can_delete=True
+    Question, Answer, form=AnswerForm, extra=4, can_delete=True
 )
 
 @login_required
