@@ -1,19 +1,39 @@
 {% extends "base.html" %}
-
-{% block title %}{{ question.quiz.title }}{% endblock %}
+{% block title %}{{ session.quiz.title }}{% endblock %}
 
 {% block content %}
+{% if finished %}
+<h2>Результат вікторини: {{ session.quiz.title }}</h2>
+<p>Ваш рахунок: {{ session.score }} / {{ session.quiz.question_set.count }}</p>
+<ul>
+{% for ua in user_answers %}
+<li>{{ ua.question.text }} - Ваша відповідь: {{ ua.selected_answer.text }} {% if ua.is_correct %}✅{% else %}❌{% endif %}</li>
+{% endfor %}
+</ul>
+<a href="{% url 'quiz_list' %}" class="btn btn-primary mt-3">Назад до списку вікторин</a>
+{% else %}
 <h2>{{ question.text }}</h2>
-<form method="post">
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+<form method="post" id="quizForm">
   {% csrf_token %}
   {% for answer in question.answer_set.all %}
     <div class="form-check mb-2">
       <input class="form-check-input" type="radio" name="answer" id="answer{{ answer.id }}" value="{{ answer.id }}" required>
-      <label class="form-check-label" for="answer{{ answer.id }}">
-        {{ answer.text }}
-      </label>
+      <label class="form-check-label" for="answer{{ answer.id }}">{{ answer.text }}</label>
     </div>
   {% endfor %}
   <button type="submit" class="btn btn-success mt-3">Відповісти</button>
 </form>
+<script>
+document.getElementById('quizForm').addEventListener('submit', function(e){
+  let checked = document.querySelector('input[name="answer"]:checked');
+  if(!checked){
+    e.preventDefault();
+    alert('Будь ласка, виберіть відповідь перед відправкою!');
+  }
+});
+</script>
+{% endif %}
 {% endblock %}

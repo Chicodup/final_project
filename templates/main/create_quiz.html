@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Створити вікторину{% endblock %}
+
+{% block content %}
+<h2>Створити вікторину</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success">Створити вікторину</button>
+</form>
+{% endblock %}

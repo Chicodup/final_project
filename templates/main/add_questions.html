@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Додати питання{% endblock %}
+{% block content %}
+
+<h2>Додати питання до "{{ quiz.title }}"</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{ question_form.as_p }}
+
+    <h5>Варіанти відповідей</h5>
+    {{ answer_formset.management_form }}
+    {% for form in answer_formset %}
+        <div class="mb-2 p-2 border rounded">
+            {{ form.as_p }}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-success">Додати питання</button>
+</form>
+
+{% endblock %}

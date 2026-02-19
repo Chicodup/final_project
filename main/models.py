@@ -10,7 +10,6 @@ class Quiz(models.Model):
     def __str__(self):
         return self.title
 
-
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     text = models.TextField()
@@ -20,7 +19,6 @@ class Question(models.Model):
     def __str__(self):
         return self.text
 
-
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     text = models.CharField(max_length=255)
@@ -28,7 +26,6 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.text
-
 
 class QuizSession(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
@@ -40,7 +37,6 @@ class QuizSession(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.quiz.title}"
-
 
 class UserAnswer(models.Model):
     session = models.ForeignKey(QuizSession, on_delete=models.CASCADE)
