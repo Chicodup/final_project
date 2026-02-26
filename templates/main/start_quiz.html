@@ -1,0 +1,17 @@
+def start_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+
+    # Якщо ім'я гравця ще не введене → редірект на форму
+    if 'player_name' not in request.session:
+        return redirect('enter_name', quiz_id=quiz.id)
+
+    # Створюємо сесію вікторини
+    if not request.session.session_key:
+        request.session.create()
+
+    session = QuizSession.objects.create(
+        quiz=quiz,
+        session_key=request.session.session_key,
+        player_name=request.session['player_name']
+    )
+    return redirect('quiz_question', session_id=session.id, question_index=0)

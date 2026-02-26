@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Введіть ім'я{% endblock %}
+
+{% block content %}
+<h2>Введіть своє ім'я</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="player_name" placeholder="Ваше ім'я" required class="form-control mb-3">
+    <button type="submit" class="btn btn-primary">Почати вікторину</button>
+</form>
+
+{% if error %}
+<p class="text-danger mt-2">{{ error }}</p>
+{% endif %}
+{% endblock %}

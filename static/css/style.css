@@ -1,0 +1,94 @@
+/* Загальний темний фон */
+html, body {
+    background-color: #121212 !important;
+    color: #e0e0e0 !important;
+    font-family: Arial, sans-serif;
+}
+
+/* Контейнери Bootstrap */
+.container, .container-fluid, main, .card, .card-body, .row {
+    background-color: transparent !important;
+}
+
+/* Navbar */
+.navbar, .custom-navbar {
+    background-color: #1a1a1a !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+}
+
+/* Navbar лінки */
+.navbar .nav-link {
+    color: #e0e0e0 !important;
+}
+
+.navbar .nav-link:hover {
+    color: #0d6efd !important;
+}
+
+/* Бренд navbar */
+.navbar-brand {
+    color: #e0e0e0 !important;
+}
+
+.navbar-brand:hover {
+    color: #0d6efd !important;
+}
+
+/* Footer */
+footer {
+    background-color: #1a1a1a !important;
+    color: #b0b0b0 !important;
+    padding: 20px 0;
+}
+
+/* Кнопки */
+.btn {
+    background-color: #333 !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background-color: #0d6efd !important;
+    color: #fff !important;
+    border-color: #0d6efd !important;
+}
+
+/* Посилання */
+a {
+    color: #0d6efd !important;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+a:hover {
+    color: #ffffff !important;
+}
+
+/* Форми */
+input, textarea, select {
+    background-color: #222 !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #444 !important;
+    transition: 0.3s;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #0d6efd !important;
+    outline: none !important;
+}
+
+/* Таблиці */
+table, th, td {
+    background-color: transparent !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
+
+/* Мобільна адаптивність */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.5rem 1rem;
+    }
+}
