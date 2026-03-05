@@ -1,39 +1,107 @@
 {% extends "base.html" %}
+
 {% block title %}{{ session.quiz.title }}{% endblock %}
 
 {% block content %}
+
 {% if finished %}
 <h2>Результат вікторини: {{ session.quiz.title }}</h2>
 <p>Ваш рахунок: {{ session.score }} / {{ session.quiz.question_set.count }}</p>
+
 <ul>
 {% for ua in user_answers %}
-<li>{{ ua.question.text }} - Ваша відповідь: {{ ua.selected_answer.text }} {% if ua.is_correct %}✅{% else %}❌{% endif %}</li>
+  <li>
+    <strong>{{ ua.question.text }}</strong> - 
+    Ваша відповідь: 
+    {% if ua.selected_answer %}
+      {{ ua.selected_answer.text }}
+    {% else %}
+      <em>Не відповів</em>
+    {% endif %}
+    {% if ua.is_correct %}
+      ✅
+    {% else %}
+      ❌
+    {% endif %}
+  </li>
 {% endfor %}
 </ul>
+
 <a href="{% url 'quiz_list' %}" class="btn btn-primary mt-3">Назад до списку вікторин</a>
+
 {% else %}
+
+<h3>Питання {{ question_index }} / {{ total_questions }}</h3>
 <h2>{{ question.text }}</h2>
+
+{% if question.media %}
+  <div class="mb-3">
+    <img src="{{ question.media.url }}" alt="Медіафайл питання" style="max-width:100%;">
+  </div>
+{% endif %}
+
 {% if error %}
 <div class="alert alert-danger">{{ error }}</div>
 {% endif %}
+
+<div id="timer" style="font-size:40px; color:#ebebeb; margin:10px 0;">
+  {{ question.time_limit|default:30 }}
+</div>
+
 <form method="post" id="quizForm">
   {% csrf_token %}
   {% for answer in question.answer_set.all %}
     <div class="form-check mb-2">
-      <input class="form-check-input" type="radio" name="answer" id="answer{{ answer.id }}" value="{{ answer.id }}" required>
+      <input class="form-check-input" type="radio" name="answer" id="answer{{ answer.id }}" value="{{ answer.id }}">
       <label class="form-check-label" for="answer{{ answer.id }}">{{ answer.text }}</label>
     </div>
   {% endfor %}
   <button type="submit" class="btn btn-success mt-3">Відповісти</button>
 </form>
+
 <script>
-document.getElementById('quizForm').addEventListener('submit', function(e){
-  let checked = document.querySelector('input[name="answer"]:checked');
-  if(!checked){
-    e.preventDefault();
-    alert('Будь ласка, виберіть відповідь перед відправкою!');
-  }
+document.addEventListener("DOMContentLoaded", function() {
+    const timerElement = document.getElementById("timer");
+    const quizForm = document.getElementById("quizForm");
+
+    if (!timerElement || !quizForm) return;
+
+    // Таймер у секундах
+    let timeLeft = parseInt("{{ question.time_limit|default:30 }}", 10);
+    timerElement.textContent = timeLeft;
+
+    const timer = setInterval(function() {
+        timeLeft--;
+        timerElement.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            quizForm.submit(); // сабміт навіть без відповіді
+        }
+    }, 1000);
+
+    // Додатково можна показати підсвітку останніх 5 секунд
+    const intervalHighlight = setInterval(function() {
+        if (timeLeft <= 5) {
+            timerElement.style.color = "red";
+            timerElement.style.fontWeight = "bold";
+        }
+    }, 100);
+
+    // Перед сабмітом форми (необов'язково)
+    quizForm.addEventListener("submit", function(e) {
+        // Якщо хочеш, щоб alert з'являвся при незаповненій відповіді, раскоментуй:
+        /*
+        let checked = document.querySelector('input[name="answer"]:checked');
+        if (!checked) {
+            e.preventDefault();
+            alert("Будь ласка, виберіть відповідь перед відправкою!");
+        }
+        */
+    });
 });
 </script>
+
 {% endif %}
+
 {% endblock %}

@@ -8,15 +8,12 @@ AnswerFormSet = inlineformset_factory(
     Question, Answer, form=AnswerForm, extra=4, can_delete=True
 )
 
-# ------------------- Основні views -------------------
-
 def quiz_list(request):
     quizzes = Quiz.objects.all()
     return render(request, 'main/quiz_list.html', {
         'quizzes': quizzes,
         'welcome_text': "Ласкаво просимо! Оберіть вікторину або створіть свою."
     })
-
 
 def create_quiz(request):
     if request.method == 'POST':
@@ -29,7 +26,6 @@ def create_quiz(request):
     else:
         form = QuizForm()
     return render(request, 'main/create_quiz.html', {'form': form})
-
 
 def add_questions(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
@@ -52,20 +48,13 @@ def add_questions(request, quiz_id):
         'answer_formset': answer_formset
     })
 
-
 def delete_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
     if request.user == quiz.creator:
         quiz.delete()
     return redirect('quiz_list')
 
-
-# ------------------- Новий функціонал для імені -------------------
-
 def enter_name(request, quiz_id):
-    """
-    Сторінка для введення імені гравця перед стартом вікторини
-    """
     if request.method == 'POST':
         player_name = request.POST.get('player_name')
         if player_name:
@@ -76,73 +65,59 @@ def enter_name(request, quiz_id):
             return render(request, 'main/name.html', {'quiz_id': quiz_id, 'error': error})
     return render(request, 'main/name.html', {'quiz_id': quiz_id})
 
-
-# ------------------- Старт вікторини -------------------
-
 def start_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
-    
-    # Якщо ще немає сесії Django — створюємо
     if not request.session.session_key:
         request.session.create()
-
-    # Створюємо нову сесію вікторини
     session = QuizSession.objects.create(
         quiz=quiz,
         session_key=request.session.session_key,
         player_name=request.session.get('player_name', 'Гравець')
     )
-    
     return redirect('quiz_question', session_id=session.id, question_index=0)
-
-
-# ------------------- Питання вікторини -------------------
 
 def quiz_question(request, session_id, question_index):
     session = get_object_or_404(QuizSession, id=session_id, session_key=request.session.session_key)
-    questions = list(session.quiz.question_set.all())
-    
-    if question_index >= len(questions):
+    questions = list(session.quiz.question_set.all().order_by('id'))  # Гарантований порядок
+
+    total_questions = len(questions)
+    if question_index >= total_questions:
         session.completed = True
         session.finished_at = timezone.now()
         session.save()
         return redirect('quiz_result', session_id=session.id)
 
     question = questions[question_index]
+    error = None
 
     if request.method == 'POST':
         answer_id = request.POST.get('answer')
-        if not answer_id:
-            error = "Будь ласка, оберіть відповідь."
-            return render(request, 'main/quiz_question.html', {
-                'question': question,
-                'session': session,
-                'finished': False,
-                'error': error
-            })
+        answer = None
+        is_correct = False
+        if answer_id:
+            answer = get_object_or_404(Answer, id=int(answer_id))
+            is_correct = answer.is_correct
+            if is_correct:
+                session.score += 1
+                session.save()
 
-        answer = get_object_or_404(Answer, id=int(answer_id))
         UserAnswer.objects.create(
             session=session,
             question=question,
             selected_answer=answer,
-            is_correct=answer.is_correct
+            is_correct=is_correct
         )
-
-        if answer.is_correct:
-            session.score += 1
-            session.save()
 
         return redirect('quiz_question', session_id=session.id, question_index=question_index + 1)
 
     return render(request, 'main/quiz_question.html', {
-        'question': question,
         'session': session,
-        'finished': False
+        'question': question,
+        'question_index': question_index + 1,
+        'total_questions': total_questions,
+        'finished': False,
+        'error': error
     })
-
-
-# ------------------- Результати вікторини -------------------
 
 def quiz_result(request, session_id):
     session = get_object_or_404(QuizSession, id=session_id, session_key=request.session.session_key)
