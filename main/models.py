@@ -75,6 +75,12 @@ class UserAnswer(models.Model):
 
     session = models.ForeignKey(QuizSession, on_delete=models.CASCADE, verbose_name="Сесія вікторини")
     question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name="Питання")
-    selected_answer = models.ForeignKey(Answer, on_delete=models.CASCADE, verbose_name="Вибрана відповідь")
+    selected_answer = models.ForeignKey(
+        Answer,
+        on_delete=models.CASCADE,
+        verbose_name="Вибрана відповідь",
+        null=True,      # дозволяємо пусту відповідь
+        blank=True
+    )
     is_correct = models.BooleanField(default=False, verbose_name="Правильна відповідь")
     answered_at = models.DateTimeField(auto_now_add=True, verbose_name="Час відповіді")

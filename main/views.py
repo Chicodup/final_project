@@ -78,9 +78,9 @@ def start_quiz(request, quiz_id):
 
 def quiz_question(request, session_id, question_index):
     session = get_object_or_404(QuizSession, id=session_id, session_key=request.session.session_key)
-    questions = list(session.quiz.question_set.all().order_by('id'))  # Гарантований порядок
-
+    questions = list(session.quiz.question_set.all().order_by('id'))
     total_questions = len(questions)
+
     if question_index >= total_questions:
         session.completed = True
         session.finished_at = timezone.now()
@@ -107,7 +107,6 @@ def quiz_question(request, session_id, question_index):
             selected_answer=answer,
             is_correct=is_correct
         )
-
         return redirect('quiz_question', session_id=session.id, question_index=question_index + 1)
 
     return render(request, 'main/quiz_question.html', {
