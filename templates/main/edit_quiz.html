@@ -1,22 +1,25 @@
 {% extends "base.html" %}
-{% block title %}{{ title }}{% endblock %}
+{% block title %}Редагувати вікторину{% endblock %}
 {% block content %}
 
-<h2>{{ title }}: "{{ quiz.title }}"</h2>
+<h2>Редагування вікторини: "{{ quiz.title }}"</h2>
 
 <form method="post">
     {% csrf_token %}
-    {{ quiz_form.as_p }}
+    {{ form.as_p }}
     <button type="submit" class="btn btn-warning">Зберегти зміни</button>
     <a href="{% url 'quiz_list' %}" class="btn btn-secondary ms-2">Відмінити</a>
 </form>
 
 <hr>
+
 <h3>Питання вікторини</h3>
 <ul class="list-group mb-3">
     {% for question in quiz.question_set.all %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>{{ forloop.counter }}. {{ question.text }}</div>
+            <div>
+                {{ forloop.counter }}. {{ question.text }}
+            </div>
             <div class="btn-group">
                 <a href="{% url 'edit_question' quiz.id question.id %}" class="btn btn-sm btn-warning">Редагувати</a>
             </div>

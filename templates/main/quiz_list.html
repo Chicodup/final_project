@@ -1,26 +1,20 @@
 {% extends "base.html" %}
-
 {% block title %}Вікторини{% endblock %}
-
 {% block content %}
+
 <h2>{{ welcome_text }}</h2>
 <a href="{% url 'create_quiz' %}" class="btn btn-primary mb-3">Створити нову вікторину</a>
 
 <ul class="list-group">
   {% for quiz in quizzes %}
     <li class="list-group-item d-flex justify-content-between align-items-center">
-      {{ quiz.title }}
-      <div>
-        <!-- Кнопка "Пройти" веде на форму введення імені -->
+      <div>{{ quiz.title }}</div>
+      <div class="btn-group">
         <a href="{% url 'enter_name' quiz.id %}" class="btn btn-success btn-sm">Пройти</a>
-
-        <!-- Копіювати посилання також веде на форму введення імені -->
-        <button class="btn btn-info btn-sm copy-btn"
-                data-link="{{ request.scheme }}://{{ request.get_host }}{% url 'enter_name' quiz.id %}">
-            Скопіювати посилання
-        </button>
-
-        {% if quiz.creator == user %}
+        {% if quiz.creator == user or user.is_staff %}
+          <a href="{% url 'edit_quiz' quiz.id %}" class="btn btn-warning btn-sm">Редагувати</a>
+          <a href="{% url 'add_questions' quiz.id %}" class="btn btn-primary btn-sm">+ Питання</a>
+          <a href="{% url 'quiz_results_admin' quiz.id %}" class="btn btn-secondary btn-sm">Результати</a>
           <a href="{% url 'delete_quiz' quiz.id %}" class="btn btn-danger btn-sm">Видалити</a>
         {% endif %}
       </div>
@@ -30,18 +24,4 @@
   {% endfor %}
 </ul>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.copy-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const link = this.dataset.link;
-            navigator.clipboard.writeText(link).then(() => {
-                alert('Посилання скопійовано:\n' + link);
-            }).catch(() => {
-                alert('Не вдалося скопіювати посилання');
-            });
-        });
-    });
-});
-</script>
 {% endblock %}

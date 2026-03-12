@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Результати вікторини{% endblock %}
+
+{% block content %}
+<h2>Результати вікторини: {{ quiz.title }}</h2>
+
+{% if all_results %}
+  {% for result in all_results %}
+    <h4>Гравець: {{ result.session.player_name }} | Рахунок: {{ result.session.score }} / {{ quiz.question_set.count }}</h4>
+    <ul class="list-group mb-3">
+      {% for ua in result.user_answers %}
+        <li class="list-group-item">
+          <strong>{{ ua.question.text }}</strong> - 
+          {% if ua.selected_answer %}
+            {{ ua.selected_answer.text }}
+          {% else %}
+            <em>Не відповів</em>
+          {% endif %}
+          {% if ua.is_correct %}
+            ✅
+          {% else %}
+            ❌
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+{% else %}
+<p>Ще ніхто не проходив цю вікторину.</p>
+{% endif %}
+
+<a href="{% url 'quiz_list' %}" class="btn btn-primary mt-3">Назад до списку вікторин</a>
+{% endblock %}

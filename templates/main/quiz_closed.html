@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Вікторина закрита{% endblock %}
+
+{% block content %}
+
+<h2>Ця вікторина вже закрита</h2>
+<p>Дедлайн проходження минув.</p>
+
+<a href="{% url 'quiz_list' %}" class="btn btn-primary">
+Повернутися
+</a>
+
+{% endblock %}

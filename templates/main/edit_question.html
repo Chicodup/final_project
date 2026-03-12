@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Редагувати питання{% endblock %}
+{% block content %}
+
+<h2>Редагування питання для "{{ quiz.title }}"</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ q_form.as_p }}
+
+    <h5>Варіанти відповідей</h5>
+    {{ a_formset.management_form }}
+    {% for form in a_formset %}
+        <div class="mb-3 p-3 border rounded">
+            {{ form.as_p }}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-warning">Зберегти зміни</button>
+    <a href="{% url 'edit_quiz' quiz.id %}" class="btn btn-secondary ms-2">Відмінити</a>
+</form>
+
+{% endblock %}
