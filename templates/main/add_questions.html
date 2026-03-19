@@ -25,7 +25,10 @@
         <li class="list-group-item">Питань ще немає</li>
     {% endfor %}
 </ul>
-
-<a href="{% url 'add_questions' quiz.id %}" class="btn btn-primary">+ Додати питання</a>
+<form method="post">
+    {% csrf_token %}
+    {{ question_form.as_p }}
+    <button type="submit" class="btn btn-primary">Додати питання</button>
+</form>
 
 {% endblock %}
